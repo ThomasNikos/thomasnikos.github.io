@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Νίκος Θωμάς</title>
+    <link rel="icon" href="./images/favicon.png" type="image/png">
+    <style>
+        @font-face {
+             font-family: uniheavy;
+             src: url(./fonts/UniSans_Heavy.ttf);
+        }
+        
+        body {
+            font-family: uniheavy;
+            background-image: url('./images/background.jpg');
+            background-size: cover;
+            margin: 0;
+            padding: 0px;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow: hidden; /* Prevent scrolling */
+        }
+
+        h1 {
+            color: #fff;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            background: rgba(17, 18, 18, 0.5);
+            border-radius: 5px;
+        }
+
+        li {
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            background: rgba(17, 18, 18, 0.8);
+            cursor: pointer;
+        }
+
+        a {
+            text-decoration: none;
+            color: #0366d6;
+        }
+
+        footer {
+            position: fixed;
+            bottom: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            height: 130px;
+            width: 100%;
+            background-color: rgba(17, 18, 18, 0.8);
+            line-height: 40px;
+        }
+        
+        footer ul img {
+            height: 28px;
+            width: auto;
+            vertical-align: middle;
+        }
+
+        footer .left-content,
+        footer .right-content {
+            display: flex;
+            align-items: center;
+        }
+
+        footer ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        footer ul li {
+            display: inline-block;
+        }
+
+        .languages-bar {
+            display: flex;
+            margin-top: 10px;
+        }
+
+        .language {
+            display: flex;
+            align-items: flex-end;
+            height: 20px;
+            margin-right: 5px;
+            background-color: #f1e05a; /* Default color for the language bar */
+            padding: 5px;
+            border-radius: 3px;
+        }
+
+        .language span {
+            margin-right: 5px;
+            font-size: 14px;
+            color: #000;
+        }
+    </style>
+</head>
+
+<body>
+    <h1> My GitHub Repositories | Nick Thomas</h1>
+    <ul id="repos-list"></ul>
+
+    <footer>
+        <div class="left-content">
+            <span>&copy; 2024 | Nick Thomas</span>
+        </div>
+        <div class="right-content">
+            <ul>
+                <li><a href="https://www.linkedin.com/in/nick-thomas-5687b5263" target="_blank"><img src="./images/linkedin-icon.png" alt="LinkedIn"></a></li>
+                <li><a href="https://github.com/ThomasNikos" target="_blank"><img src="./images/github-icon.png" alt="GitHub"></a></li>
+            </ul>
+        </div>
+    </footer>
+
+    <script>
+        async function fetchRepoDetails(repoName) {
+            const response = await fetch(`https://api.github.com/repos/ThomasNikos/${repoName}`);
+            if (response.ok) {
+                const repoDetails = await response.json();
+                return repoDetails;
+            } else {
+                console.error(`Failed to fetch repository details for ${repoName}`);
+                return null;
+            }
+        }
+
+        function getLanguageColor(language) {
+            const colorMap = {
+                JavaScript: '#f1e05a',
+                HTML: '#e34c26',
+                CSS: '#563d7c',
+                'C++': '#f34b7d',
+                Java: '#b07219',
+                Roff: '#ecdebe',
+                VHDL: '#adb2cb',
+                Shell: '#89e051',
+                C: '#555555',
+            };
+
+            return colorMap[language] || '#f1e05a';
+        }
+
+        async function displayUniwaRepoDetails() {
+            const repoDetails = await fetchRepoDetails('uniwa');
+            const reposList = document.getElementById('repos-list');
+
+            if (repoDetails) {
+                const languagesResponse = await fetch(repoDetails.languages_url);
+                const languagesData = await languagesResponse.json();
+                const languages = Object.keys(languagesData);
+
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <h2><a href="${repoDetails.html_url}" target="_blank">${repoDetails.name}</a></h2>
+                    <p><strong>Description:</strong> ${repoDetails.description}</p>
+                    <p><strong>Languages:</strong></p>
+                    <div class="languages-bar">
+                        ${languages.map(language => `<div class="language" style="width: ${languagesData[language]}%; background-color: ${getLanguageColor(language)};"><span>${language}</span></div>`).join('')}
+                    </div>
+                `;
+                reposList.appendChild(li);
+            }
+        }
+
+        async function displaySiteRepoDetails() {
+            const repoDetails = await fetchRepoDetails('thomasnikos.github.io');
+            const reposList = document.getElementById('repos-list');
+
+            if (repoDetails) {
+                const languagesResponse = await fetch(repoDetails.languages_url);
+                const languagesData = await languagesResponse.json();
+                const languages = Object.keys(languagesData);
+
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <h2><a href="${repoDetails.html_url}" target="_blank">${repoDetails.name}</a></h2>
+                    <p><strong>Description:</strong> ${repoDetails.description}</p>
+                    <p><strong>Languages:</strong></p>
+                    <div class="languages-bar">
+                        ${languages.map(language => `<div class="language" style="width: ${languagesData[language]}%; background-color: ${getLanguageColor(language)};"><span>${language}</span></div>`).join('')}
+                    </div>
+                `;
+                reposList.appendChild(li);
+            }
+        }
+
+        async function displayDiscordRepoDetails() {
+            const repoDetails = await fetchRepoDetails('discord.js');
+            const reposList = document.getElementById('repos-list');
+
+            if (repoDetails) {
+                const languagesResponse = await fetch(repoDetails.languages_url);
+                const languagesData = await languagesResponse.json();
+                const languages = Object.keys(languagesData);
+
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <h2><a href="${repoDetails.html_url}" target="_blank">${repoDetails.name}</a></h2>
+                    <p><strong>Description:</strong> ${repoDetails.description}</p>
+                    <p><strong>Languages:</strong></p>
+                    <div class="languages-bar">
+                        ${languages.map(language => `<div class="language" style="width: ${languagesData[language]}%; background-color: ${getLanguageColor(language)};"><span>${language}</span></div>`).join('')}
+                    </div>
+                `;
+                reposList.appendChild(li);
+            }
+        }
+
+        displayUniwaRepoDetails();
+        displaySiteRepoDetails();
+        displayDiscordRepoDetails();
+    </script>
+
+</body>
+
+</html>
