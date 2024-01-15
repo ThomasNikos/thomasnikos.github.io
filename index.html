@@ -21,7 +21,6 @@
             display: flex;
             flex-direction: column;
             min-height: 100vh;
-            overflow: hidden; /* Prevent scrolling */
         }
 
         h1 {
@@ -126,6 +125,18 @@
                 height: auto;
             }
 
+            footer ul li {
+                max-width: 100%;
+                display: block;
+                text-align: center;
+            }
+
+            footer ul img {
+                width: auto;
+                max-width: 100%;
+                height: auto;
+            }
+
             .languages-bar {
                 flex-wrap: wrap;
             }
@@ -147,8 +158,8 @@
         </div>
         <div class="right-content">
             <ul>
-                <li><a href="https://www.linkedin.com/in/nick-thomas-5687b5263" target="_blank"><img src="./images/linkedin-icon.png" alt="LinkedIn"></a></li>
-                <li><a href="https://github.com/ThomasNikos" target="_blank"><img src="./images/github-icon.png" alt="GitHub"></a></li>
+                <li><a href="https://www.linkedin.com/in/nick-thomas-5687b5263" target="_blank"><img src="./images/linkedin-icon.png" alt="LinkedIn" width="50" height="60"></a></li>
+                <li><a href="https://github.com/ThomasNikos" target="_blank"><img src="./images/github-icon.png" alt="GitHub" width="50" height="60"></a></li>
             </ul>
         </div>
     </footer>
@@ -249,8 +260,7 @@
 
         displayUniwaRepoDetails();
         displaySiteRepoDetails();
-        displayDiscordRepoDetails();    </script>
-
+        displayDiscordRepoDetails();
+    </script>
 </body>
-
 </html>
