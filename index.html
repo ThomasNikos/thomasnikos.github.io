@@ -2,15 +2,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
     <title>Νίκος Θωμάς</title>
     <link rel="icon" href="./images/favicon.png" type="image/png">
     <style>
         @font-face {
-             font-family: uniheavy;
-             src: url(./fonts/UniSans_Heavy.ttf);
+            font-family: uniheavy;
+            src: url(./fonts/UniSans_Heavy.ttf);
         }
-        
+
         body {
             font-family: uniheavy;
             background-image: url('./images/background.jpg');
@@ -26,6 +26,7 @@
 
         h1 {
             color: #fff;
+            font-size: 32px;
         }
 
         ul {
@@ -62,11 +63,10 @@
             background-color: rgba(17, 18, 18, 0.8);
             line-height: 40px;
         }
-        
+
         footer ul img {
-            height: 28px;
-            width: auto;
-            vertical-align: middle;
+            max-width: 100%;
+            height: auto;
         }
 
         footer .left-content,
@@ -88,6 +88,7 @@
         .languages-bar {
             display: flex;
             margin-top: 10px;
+            flex-wrap: wrap;
         }
 
         .language {
@@ -95,15 +96,43 @@
             align-items: flex-end;
             height: 20px;
             margin-right: 5px;
-            background-color: #f1e05a; /* Default color for the language bar */
+            background-color: #f1e05a;
             padding: 5px;
             border-radius: 3px;
+            margin-bottom: 5px;
         }
 
         .language span {
             margin-right: 5px;
             font-size: 14px;
             color: #000;
+        }
+
+        @media only screen and (max-width: 600px) {
+            body {
+                font-size: 14px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            li {
+                margin: 5px 0;
+                padding: 10px;
+            }
+
+            footer {
+                height: auto;
+            }
+
+            .languages-bar {
+                flex-wrap: wrap;
+            }
+
+            .language {
+                margin-bottom: 5px;
+            }
         }
     </style>
 </head>
@@ -220,8 +249,7 @@
 
         displayUniwaRepoDetails();
         displaySiteRepoDetails();
-        displayDiscordRepoDetails();
-    </script>
+        displayDiscordRepoDetails();    </script>
 
 </body>
 
