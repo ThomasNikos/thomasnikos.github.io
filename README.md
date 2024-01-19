@@ -1,3 +1,3 @@
 # thomasnikos.github.io
 
-Portofolio
+Portfolio
