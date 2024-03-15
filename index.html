@@ -193,75 +193,35 @@
             return colorMap[language] || '#f1e05a';
         }
 
-        async function displayUniwaRepoDetails() {
-            const repoDetails = await fetchRepoDetails('uniwa');
-            const reposList = document.getElementById('repos-list');
+async function displayRepoDetails(repoName) {
+    const repoDetails = await fetchRepoDetails(repoName);
+    const reposList = document.getElementById('repos-list');
 
-            if (repoDetails) {
-                const languagesResponse = await fetch(repoDetails.languages_url);
-                const languagesData = await languagesResponse.json();
-                const languages = Object.keys(languagesData);
+    if (repoDetails) {
+        const languagesResponse = await fetch(repoDetails.languages_url);
+        const languagesData = await languagesResponse.json();
+        const languages = Object.keys(languagesData);
 
-                const li = document.createElement('li');
-                li.innerHTML = `
-                    <h2><a href="${repoDetails.html_url}" target="_blank">${repoDetails.name}</a></h2>
-                    <p><strong>Description:</strong> ${repoDetails.description}</p>
-                    <p><strong>Languages:</strong></p>
-                    <div class="languages-bar">
-                        ${languages.map(language => `<div class="language" style="width: ${languagesData[language]}%; background-color: ${getLanguageColor(language)};"><span>${language}</span></div>`).join('')}
-                    </div>
-                `;
-                reposList.appendChild(li);
-            }
-        }
+        const li = document.createElement('li');
+        li.innerHTML = `
+            <h2><a href="${repoDetails.html_url}" target="_blank">${repoDetails.name}</a></h2>
+            <p><strong>Description:</strong> ${repoDetails.description}</p>
+            <p><strong>Languages:</strong></p>
+            <div class="languages-bar">
+                ${languages.map(language => `<div class="language" style="width: ${languagesData[language]}%; background-color: ${getLanguageColor(language)};"><span>${language}</span></div>`).join('')}
+            </div>
+        `;
+        reposList.appendChild(li);
+    }
+}
 
-        async function displaySiteRepoDetails() {
-            const repoDetails = await fetchRepoDetails('thomasnikos.github.io');
-            const reposList = document.getElementById('repos-list');
+    async function displayAllRepoDetails() {
+    await displayRepoDetails('uniwa');
+    await displayRepoDetails('thomasnikos.github.io');
+    await displayRepoDetails('ai');
+    await displayRepoDetails('discord.js');
+}
 
-            if (repoDetails) {
-                const languagesResponse = await fetch(repoDetails.languages_url);
-                const languagesData = await languagesResponse.json();
-                const languages = Object.keys(languagesData);
-
-                const li = document.createElement('li');
-                li.innerHTML = `
-                    <h2><a href="${repoDetails.html_url}" target="_blank">${repoDetails.name}</a></h2>
-                    <p><strong>Description:</strong> ${repoDetails.description}</p>
-                    <p><strong>Languages:</strong></p>
-                    <div class="languages-bar">
-                        ${languages.map(language => `<div class="language" style="width: ${languagesData[language]}%; background-color: ${getLanguageColor(language)};"><span>${language}</span></div>`).join('')}
-                    </div>
-                `;
-                reposList.appendChild(li);
-            }
-        }
-
-        async function displayDiscordRepoDetails() {
-            const repoDetails = await fetchRepoDetails('discord.js');
-            const reposList = document.getElementById('repos-list');
-
-            if (repoDetails) {
-                const languagesResponse = await fetch(repoDetails.languages_url);
-                const languagesData = await languagesResponse.json();
-                const languages = Object.keys(languagesData);
-
-                const li = document.createElement('li');
-                li.innerHTML = `
-                    <h2><a href="${repoDetails.html_url}" target="_blank">${repoDetails.name}</a></h2>
-                    <p><strong>Description:</strong> ${repoDetails.description}</p>
-                    <p><strong>Languages:</strong></p>
-                    <div class="languages-bar">
-                        ${languages.map(language => `<div class="language" style="width: ${languagesData[language]}%; background-color: ${getLanguageColor(language)};"><span>${language}</span></div>`).join('')}
-                    </div>
-                `;
-                reposList.appendChild(li);
-            }
-        }
-
-        displayUniwaRepoDetails();
-        displaySiteRepoDetails();
-        displayDiscordRepoDetails();
     </script>
 </body>
 </html>
