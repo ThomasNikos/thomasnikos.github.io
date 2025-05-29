@@ -25,7 +25,7 @@
     margin: 0.25rem;
 }
 
-/* Custom scrollbar */
+/* Custom scrollbar - Light Mode */
 ::-webkit-scrollbar {
     width: 8px;
 }
@@ -41,4 +41,22 @@
 
 ::-webkit-scrollbar-thumb:hover {
     background: #64748b;
+}
+
+/* Custom scrollbar - Dark Mode */
+.dark ::-webkit-scrollbar-track {
+    background: #1e293b;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+    background: #475569;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+    background: #64748b;
+}
+
+/* Theme transition */
+.transition-theme {
+    transition: background-color 0.3s ease, color 0.3s ease;
 } 
