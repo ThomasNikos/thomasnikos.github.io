@@ -1,0 +1,102 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.hero {
+    position: relative;
+    background: url('../images/bg2.jpg') center/cover no-repeat;
+}
+
+.hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.9), rgba(30, 64, 175, 0.9));
+    z-index: 1;
+}
+
+.dark .hero::before {
+    background: linear-gradient(135deg, rgba(30, 64, 175, 0.9), rgba(2, 6, 23, 0.95));
+}
+
+.hero > * { 
+    position: relative; 
+    z-index: 2; 
+}
+
+#theme-toggle .fa-sun, 
+.dark #theme-toggle .fa-moon { 
+    display: none; 
+}
+
+#theme-toggle .fa-moon, 
+.dark #theme-toggle .fa-sun { 
+    display: inline-block; 
+}
+
+.section-light, 
+.section-dark {
+    position: relative;
+    border-bottom: 1px solid rgb(226 232 240);
+}
+
+.section-light {
+    background-color: rgb(248 250 252);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.section-dark { 
+    background-color: rgb(241 245 249); 
+}
+
+.dark .section-light, 
+.dark .section-dark {
+    border-bottom: 1px solid rgb(31 41 55);
+}
+
+.dark .section-light {
+    background-color: rgb(17 24 39);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.dark .section-dark { 
+    background-color: rgb(15 23 42); 
+}
+
+.repo-card, 
+.bg-slate-50 {
+    border: 1px solid rgb(226 232 240);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dark .repo-card, 
+.dark .bg-dark-200 {
+    border: 1px solid rgb(31 41 55);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+}
+
+.repo-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 12px -2px rgba(0, 0, 0, 0.1);
+}
+
+.dark .repo-card:hover {
+    box-shadow: 0 8px 12px -2px rgba(0, 0, 0, 0.3);
+}
+
+#organization { 
+    background-color: rgb(241 245 249); 
+}
+
+.dark #organization { 
+    background-color: rgb(17 24 39); 
+}
+
+#organization .repo-card { 
+    background-color: white; 
+}
+
+.dark #organization .repo-card { 
+    background-color: rgb(31 41 55); 
+} 
