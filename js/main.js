@@ -1,13 +1,25 @@
-// Fallback configuration
-const defaultConfig = {
-    GITHUB_TOKEN: '',
-    EMAILJS_PUBLIC_KEY: '',
-    EMAILJS_SERVICE_ID: '',
-    EMAILJS_TEMPLATE_ID: ''
-};
+// Cache utilities
+const CACHE_DURATION = 60 * 60 * 1000; // 1 hour in milliseconds
 
-// Use config if defined, otherwise use default config
-const CONFIG = typeof config !== 'undefined' ? config : defaultConfig;
+function getFromCache(key) {
+    const cached = localStorage.getItem(key);
+    if (!cached) return null;
+
+    const { data, timestamp } = JSON.parse(cached);
+    if (Date.now() - timestamp > CACHE_DURATION) {
+        localStorage.removeItem(key);
+        return null;
+    }
+    return data;
+}
+
+function setInCache(key, data) {
+    const cacheData = {
+        data,
+        timestamp: Date.now()
+    };
+    localStorage.setItem(key, JSON.stringify(cacheData));
+}
 
 // Theme Toggle Functionality
 function initTheme() {
@@ -63,8 +75,23 @@ function initContactForm() {
     }
 }
 
+// Fallback configuration
+const defaultConfig = {
+    GITHUB_TOKEN: '',
+    EMAILJS_PUBLIC_KEY: '',
+    EMAILJS_SERVICE_ID: '',
+    EMAILJS_TEMPLATE_ID: ''
+};
+
+// Use config if defined, otherwise use default config
+const CONFIG = typeof config !== 'undefined' ? config : defaultConfig;
+
 // GitHub API Integration
 async function fetchRepoDetails(repoName, owner = 'ThomasNikos') {
+    const cacheKey = `repo_${owner}_${repoName}`;
+    const cached = getFromCache(cacheKey);
+    if (cached) return cached;
+
     try {
         const headers = {
             'Accept': 'application/vnd.github.v3+json'
@@ -81,7 +108,9 @@ async function fetchRepoDetails(repoName, owner = 'ThomasNikos') {
             }
             throw new Error(`Failed to fetch repository: ${repoName} (Status: ${response.status})`);
         }
-        return await response.json();
+        const data = await response.json();
+        setInCache(cacheKey, data);
+        return data;
     } catch (error) {
         console.error('Error fetching repo details:', error);
         return null;
@@ -89,6 +118,10 @@ async function fetchRepoDetails(repoName, owner = 'ThomasNikos') {
 }
 
 async function fetchPersonalRepos() {
+    const cacheKey = 'personal_repos';
+    const cached = getFromCache(cacheKey);
+    if (cached) return cached;
+
     try {
         const headers = {
             'Accept': 'application/vnd.github.v3+json'
@@ -106,7 +139,9 @@ async function fetchPersonalRepos() {
             throw new Error(`Failed to fetch repositories (Status: ${response.status})`);
         }
         const repos = await response.json();
-        return repos.filter(repo => !repo.fork && repo.owner.type !== 'Organization');
+        const filtered = repos.filter(repo => !repo.fork && repo.owner.type !== 'Organization');
+        setInCache(cacheKey, filtered);
+        return filtered;
     } catch (error) {
         console.error('Error fetching personal repos:', error);
         return [];
@@ -114,6 +149,10 @@ async function fetchPersonalRepos() {
 }
 
 async function fetchOrgRepos() {
+    const cacheKey = 'org_repos';
+    const cached = getFromCache(cacheKey);
+    if (cached) return cached;
+
     try {
         const headers = {
             'Accept': 'application/vnd.github.v3+json'
@@ -131,7 +170,9 @@ async function fetchOrgRepos() {
             throw new Error(`Failed to fetch organization repositories (Status: ${response.status})`);
         }
         const repos = await response.json();
-        return repos.filter(repo => !repo.fork);
+        const filtered = repos.filter(repo => !repo.fork);
+        setInCache(cacheKey, filtered);
+        return filtered;
     } catch (error) {
         console.error('Error fetching org repos:', error);
         return [];
@@ -139,6 +180,10 @@ async function fetchOrgRepos() {
 }
 
 async function fetchRepoLanguages(repoName, owner = 'ThomasNikos') {
+    const cacheKey = `languages_${owner}_${repoName}`;
+    const cached = getFromCache(cacheKey);
+    if (cached) return cached;
+
     try {
         const headers = {
             'Accept': 'application/vnd.github.v3+json'
@@ -152,7 +197,9 @@ async function fetchRepoLanguages(repoName, owner = 'ThomasNikos') {
         if (!response.ok) {
             throw new Error(`Failed to fetch languages for repository: ${repoName}`);
         }
-        return await response.json();
+        const data = await response.json();
+        setInCache(cacheKey, data);
+        return data;
     } catch (error) {
         console.error('Error fetching repo languages:', error);
         return {};

@@ -8,6 +8,7 @@ permissions:
   contents: read
   pages: write
   id-token: write
+  actions: read
 
 jobs:
   build:
@@ -16,14 +17,44 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Create config file
+      - name: Debug Secrets
         run: |
+          if [ -n "$TOKEN_GITHUB" ]; then
+            echo "TOKEN_GITHUB is set"
+          else
+            echo "TOKEN_GITHUB is not set"
+          fi
+          if [ -n "$EMAILJS_PUBLIC_KEY" ]; then
+            echo "EMAILJS_PUBLIC_KEY is set"
+          else
+            echo "EMAILJS_PUBLIC_KEY is not set"
+          fi
+        env:
+          TOKEN_GITHUB: ${{ secrets.TOKEN_GITHUB }}
+          EMAILJS_PUBLIC_KEY: ${{ secrets.EMAILJS_PUBLIC_KEY }}
+
+      - name: Create config file
+        env:
+          TOKEN_GITHUB: ${{ secrets.TOKEN_GITHUB }}
+          EMAILJS_PUBLIC_KEY: ${{ secrets.EMAILJS_PUBLIC_KEY }}
+          EMAILJS_SERVICE_ID: ${{ secrets.EMAILJS_SERVICE_ID }}
+          EMAILJS_TEMPLATE_ID: ${{ secrets.EMAILJS_TEMPLATE_ID }}
+        run: |
+          mkdir -p js
           echo "const config = {" > js/config.js
-          echo "    GITHUB_TOKEN: '${{ secrets.TOKEN_GITHUB }}'," >> js/config.js
-          echo "    EMAILJS_PUBLIC_KEY: '${{ secrets.EMAILJS_PUBLIC_KEY }}'," >> js/config.js
-          echo "    EMAILJS_SERVICE_ID: '${{ secrets.EMAILJS_SERVICE_ID }}'," >> js/config.js
-          echo "    EMAILJS_TEMPLATE_ID: '${{ secrets.EMAILJS_TEMPLATE_ID }}'" >> js/config.js
+          echo "    GITHUB_TOKEN: '$TOKEN_GITHUB'," >> js/config.js
+          echo "    EMAILJS_PUBLIC_KEY: '$EMAILJS_PUBLIC_KEY'," >> js/config.js
+          echo "    EMAILJS_SERVICE_ID: '$EMAILJS_SERVICE_ID'," >> js/config.js
+          echo "    EMAILJS_TEMPLATE_ID: '$EMAILJS_TEMPLATE_ID'" >> js/config.js
           echo "};" >> js/config.js
+          
+          if [ -f js/config.js ]; then
+            echo "Config file created successfully"
+            ls -l js/config.js
+          else
+            echo "Error: Config file not created"
+            exit 1
+          fi
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
