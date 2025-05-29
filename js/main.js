@@ -1,9 +1,9 @@
 // Fallback configuration
 const defaultConfig = {
     GITHUB_TOKEN: '',
-    EMAILJS_PUBLIC_KEY: 'PoadtkqwQzTDZ3gKZ',
-    EMAILJS_SERVICE_ID: 'service_ctewodj',
-    EMAILJS_TEMPLATE_ID: 'template_cpg4yog'
+    EMAILJS_PUBLIC_KEY: '',
+    EMAILJS_SERVICE_ID: '',
+    EMAILJS_TEMPLATE_ID: ''
 };
 
 // Use config if defined, otherwise use default config
