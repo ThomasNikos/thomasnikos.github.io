@@ -19,34 +19,51 @@ function initTheme() {
 // Contact Form Functionality
 function initContactForm() {
     const form = document.getElementById('contact-form');
+    const statusDiv = document.getElementById('form-status');
+
     if (form) {
+        // Initialize EmailJS
+        emailjs.init("PoadtkqwQzTDZ3gKZ");
+
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            const formData = new FormData(form);
-            const data = {
-                name: formData.get('name'),
-                email: formData.get('email'),
-                message: formData.get('message')
-            };
-
-            // Here you would typically send the data to your server
-            // For now, we'll just log it and show a success message
-            console.log('Form submitted:', data);
+            // Show loading state
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalBtnText = submitBtn.textContent;
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Sending...';
             
-            // Clear form
-            form.reset();
-            
-            // Show success message
-            alert('Thank you for your message! I will get back to you soon.');
+            try {
+                await emailjs.sendForm('service_ctewodj', 'template_cpg4yog', form);
+                
+                // Show success message
+                statusDiv.className = 'rounded-lg p-4 text-center bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300';
+                statusDiv.textContent = 'Thank you for your message! I will get back to you soon.';
+                form.reset();
+            } catch (error) {
+                // Show error message
+                statusDiv.className = 'rounded-lg p-4 text-center bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300';
+                statusDiv.textContent = 'Oops! Something went wrong. Please try again later.';
+            } finally {
+                // Reset button state
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalBtnText;
+                statusDiv.classList.remove('hidden');
+                
+                // Hide status message after 5 seconds
+                setTimeout(() => {
+                    statusDiv.classList.add('hidden');
+                }, 5000);
+            }
         });
     }
 }
 
 // GitHub API Integration
-async function fetchRepoDetails(repoName) {
+async function fetchRepoDetails(repoName, owner = 'ThomasNikos') {
     try {
-        const response = await fetch(`https://api.github.com/repos/ThomasNikos/${repoName}`);
+        const response = await fetch(`https://api.github.com/repos/${owner}/${repoName}`);
         if (response.ok) {
             return await response.json();
         }
@@ -54,6 +71,19 @@ async function fetchRepoDetails(repoName) {
     } catch (error) {
         console.error(error);
         return null;
+    }
+}
+
+async function fetchOrgRepos() {
+    try {
+        const response = await fetch('https://api.github.com/orgs/uniwa-software/repos');
+        if (response.ok) {
+            return await response.json();
+        }
+        throw new Error('Failed to fetch organization repositories');
+    } catch (error) {
+        console.error(error);
+        return [];
     }
 }
 
@@ -70,8 +100,32 @@ function getLanguageColor(language) {
         C: '#555555',
         Python: '#3572A5',
         TypeScript: '#2b7489',
+        'Jupyter Notebook': '#DA5B0B',
     };
     return colorMap[language] || '#6c757d';
+}
+
+function createRepoCard(repoDetails, index) {
+    const li = document.createElement('li');
+    li.className = 'bg-white dark:bg-dark-100 rounded-xl p-6 shadow-md hover:-translate-y-1 transition-all duration-300 repo-card';
+    li.style.setProperty('--animation-order', index);
+    
+    li.innerHTML = `
+        <h2 class="text-xl font-semibold mb-3">
+            <a href="${repoDetails.html_url}" target="_blank" class="text-blue-600 dark:text-blue-500 hover:text-blue-700 dark:hover:text-blue-400 transition-colors">
+                ${repoDetails.name}
+            </a>
+        </h2>
+        <p class="text-slate-600 dark:text-slate-400 mb-4">${repoDetails.description || 'No description available'}</p>
+        <div class="flex flex-wrap -m-1">
+            ${repoDetails.language ? `
+                <span class="language-tag" style="background-color: ${getLanguageColor(repoDetails.language)}">
+                    <i class="fas fa-code mr-2"></i>${repoDetails.language}
+                </span>
+            ` : ''}
+        </div>
+    `;
+    return li;
 }
 
 async function displayRepoDetails(repoName, index) {
@@ -110,6 +164,24 @@ async function displayRepoDetails(repoName, index) {
     }
 }
 
+async function displayOrgRepos() {
+    const repos = await fetchOrgRepos();
+    const orgReposList = document.getElementById('org-repos-list');
+
+    if (repos.length > 0) {
+        repos.forEach((repo, index) => {
+            const card = createRepoCard(repo, index);
+            orgReposList.appendChild(card);
+        });
+    } else {
+        orgReposList.innerHTML = `
+            <div class="col-span-full text-center text-slate-500 dark:text-slate-400 py-8">
+                No repositories found in the organization.
+            </div>
+        `;
+    }
+}
+
 async function displayAllRepoDetails() {
     const repos = ['uniwa', 'thomasnikos.github.io', 'ai', 'discord.js'];
     for (let i = 0; i < repos.length; i++) {
@@ -139,4 +211,5 @@ document.addEventListener('DOMContentLoaded', () => {
     initContactForm();
     initSmoothScroll();
     displayAllRepoDetails();
+    displayOrgRepos();
 }); 
