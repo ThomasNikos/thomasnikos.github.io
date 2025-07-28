@@ -21,6 +21,11 @@ class SnakeGame {
         this.currentSpeed = this.baseSpeed;
         this.lastMoveTime = 0;
         
+        // Touch and mobile support
+        this.touchStartX = 0;
+        this.touchStartY = 0;
+        this.minSwipeDistance = 30;
+        
         // UI elements
         this.scoreElement = document.getElementById('score');
         this.highScoreElement = document.getElementById('highScore');
@@ -35,7 +40,9 @@ class SnakeGame {
         
         this.initializeGame();
         this.setupEventListeners();
+        this.setupMobileControls();
         this.generateFood();
+        this.adjustCanvasForMobile();
         this.draw();
     }
     
@@ -95,6 +102,91 @@ class SnakeGame {
                 this.togglePause();
             }
         });
+    }
+    
+    setupMobileControls() {
+        // Touch button controls
+        document.getElementById('upBtn').addEventListener('click', () => this.handleDirection('up'));
+        document.getElementById('downBtn').addEventListener('click', () => this.handleDirection('down'));
+        document.getElementById('leftBtn').addEventListener('click', () => this.handleDirection('left'));
+        document.getElementById('rightBtn').addEventListener('click', () => this.handleDirection('right'));
+        
+        // Swipe gestures on canvas
+        this.canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            this.touchStartX = touch.clientX;
+            this.touchStartY = touch.clientY;
+        }, { passive: false });
+        
+        this.canvas.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            if (!this.gameRunning || this.gamePaused) return;
+            
+            const touch = e.changedTouches[0];
+            const deltaX = touch.clientX - this.touchStartX;
+            const deltaY = touch.clientY - this.touchStartY;
+            
+            // Determine if swipe distance is sufficient
+            if (Math.abs(deltaX) < this.minSwipeDistance && Math.abs(deltaY) < this.minSwipeDistance) {
+                return;
+            }
+            
+            // Determine swipe direction
+            if (Math.abs(deltaX) > Math.abs(deltaY)) {
+                // Horizontal swipe
+                if (deltaX > 0) {
+                    this.handleDirection('right');
+                } else {
+                    this.handleDirection('left');
+                }
+            } else {
+                // Vertical swipe
+                if (deltaY > 0) {
+                    this.handleDirection('down');
+                } else {
+                    this.handleDirection('up');
+                }
+            }
+        }, { passive: false });
+        
+        // Prevent scrolling on touch
+        this.canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+        }, { passive: false });
+    }
+    
+    handleDirection(direction) {
+        if (!this.gameRunning || this.gamePaused) return;
+        
+        switch (direction) {
+            case 'up':
+                if (this.dy !== 1) { this.dx = 0; this.dy = -1; }
+                break;
+            case 'down':
+                if (this.dy !== -1) { this.dx = 0; this.dy = 1; }
+                break;
+            case 'left':
+                if (this.dx !== 1) { this.dx = -1; this.dy = 0; }
+                break;
+            case 'right':
+                if (this.dx !== -1) { this.dx = 1; this.dy = 0; }
+                break;
+        }
+    }
+    
+    adjustCanvasForMobile() {
+        const isMobile = window.innerWidth < 768;
+        if (isMobile) {
+            // Make canvas smaller on mobile for better fit
+            const maxSize = Math.min(window.innerWidth - 40, 400);
+            this.canvas.style.width = maxSize + 'px';
+            this.canvas.style.height = maxSize + 'px';
+        } else {
+            // Reset to full size on desktop
+            this.canvas.style.width = '600px';
+            this.canvas.style.height = '600px';
+        }
     }
     
     startGame() {
@@ -343,4 +435,19 @@ document.addEventListener('DOMContentLoaded', () => {
         attributes: true,
         attributeFilter: ['class']
     });
+    
+    // Handle window resize for mobile responsiveness
+    window.addEventListener('resize', () => {
+        game.adjustCanvasForMobile();
+    });
+    
+    // Prevent zoom on double tap for mobile
+    let lastTouchEnd = 0;
+    document.addEventListener('touchend', function (event) {
+        const now = (new Date()).getTime();
+        if (now - lastTouchEnd <= 300) {
+            event.preventDefault();
+        }
+        lastTouchEnd = now;
+    }, false);
 }); 
