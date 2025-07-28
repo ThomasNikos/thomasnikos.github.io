@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Games - Nick Thomas</title>
+    <link rel="icon" href="./images/favicon.png" type="image/png">
+    <link rel="stylesheet" href="./css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script>
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark')
+        } else {
+            document.documentElement.classList.remove('dark')
+        }
+    </script>
+</head>
+<body class="text-slate-900 dark:bg-dark-200 dark:text-slate-100 transition-colors duration-200">
+    <header class="fixed w-full top-0 z-50 bg-white/95 dark:bg-dark-100/95 backdrop-blur-sm shadow-sm transition-colors duration-200">
+        <nav class="container mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <a href="index.html" class="text-2xl font-bold text-blue-600 hover:text-blue-700 transition-all duration-300 hover:scale-105">Nick Thomas</a>
+                <div class="flex items-center space-x-8">
+                    <button id="theme-toggle" class="p-2 rounded-lg bg-slate-100 dark:bg-dark-300 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-dark-100 transition-colors">
+                        <i class="fas fa-sun text-xl"></i>
+                        <i class="fas fa-moon text-xl"></i>
+                    </button>
+                    <div class="hidden md:flex space-x-8">
+                        <a href="index.html#about" class="text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-500 font-medium transition-colors">About</a>
+                        <a href="index.html#repositories" class="text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-500 font-medium transition-colors">Projects</a>
+                        <a href="games.html" class="text-blue-600 dark:text-blue-500 font-medium">Games</a>
+                        <a href="index.html#contact" class="text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-500 font-medium transition-colors">Contact</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="pt-24 pb-12">
+        <section class="section-light py-24 transition-colors duration-200">
+            <div class="container mx-auto px-6">
+                <h1 class="text-4xl md:text-5xl font-bold text-center mb-4 text-slate-900 dark:text-white">Snake Game</h1>
+                <p class="text-xl text-center mb-12 text-slate-600 dark:text-slate-300">A classic Snake game built with HTML5 Canvas and JavaScript</p>
+                
+                <div class="max-w-4xl mx-auto">
+                    <div class="bg-slate-50 dark:bg-dark-200 p-8 rounded-xl shadow-sm">
+                        <!-- Game Container -->
+                        <div class="flex flex-col items-center space-y-6">
+                            <!-- Game Info -->
+                            <div class="flex flex-wrap justify-center items-center gap-6 text-lg font-semibold">
+                                <div class="text-blue-600 dark:text-blue-500">
+                                    <i class="fas fa-trophy mr-2"></i>Score: <span id="score">0</span>
+                                </div>
+                                <div class="text-slate-600 dark:text-slate-400">
+                                    <i class="fas fa-star mr-2"></i>High Score: <span id="highScore">0</span>
+                                </div>
+                                <div class="text-slate-600 dark:text-slate-400">
+                                    <i class="fas fa-clock mr-2"></i>Level: <span id="level">1</span>
+                                </div>
+                            </div>
+
+                            <!-- Game Canvas -->
+                            <div class="relative">
+                                <canvas id="gameCanvas" width="600" height="600" 
+                                        class="border-4 border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-dark-100 shadow-lg"></canvas>
+                                
+                                <!-- Game Over Overlay -->
+                                <div id="gameOverOverlay" class="absolute inset-0 bg-black/50 rounded-lg flex items-center justify-center hidden">
+                                    <div class="bg-white dark:bg-dark-100 p-8 rounded-xl text-center shadow-xl">
+                                        <i class="fas fa-skull text-4xl text-red-500 mb-4"></i>
+                                        <h2 class="text-2xl font-bold mb-2 text-slate-900 dark:text-white">Game Over!</h2>
+                                        <p class="text-slate-600 dark:text-slate-400 mb-4">Final Score: <span id="finalScore" class="font-semibold text-blue-600 dark:text-blue-500">0</span></p>
+                                        <button id="restartBtn" class="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 text-white font-medium py-3 px-6 rounded-lg transition-colors">
+                                            <i class="fas fa-play mr-2"></i>Play Again
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Start Game Overlay -->
+                                <div id="startOverlay" class="absolute inset-0 bg-black/50 rounded-lg flex items-center justify-center">
+                                    <div class="bg-white dark:bg-dark-100 p-8 rounded-xl text-center shadow-xl">
+                                        <i class="fas fa-gamepad text-4xl text-blue-600 dark:text-blue-500 mb-4"></i>
+                                        <h2 class="text-2xl font-bold mb-4 text-slate-900 dark:text-white">Snake Game</h2>
+                                        <p class="text-slate-600 dark:text-slate-400 mb-6">Use arrow keys or WASD to control the snake</p>
+                                        <button id="startBtn" class="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 text-white font-medium py-3 px-6 rounded-lg transition-colors">
+                                            <i class="fas fa-play mr-2"></i>Start Game
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Controls -->
+                            <div class="text-center space-y-4">
+                                <div class="flex justify-center space-x-4">
+                                    <button id="pauseBtn" class="bg-slate-600 hover:bg-slate-700 dark:bg-slate-700 dark:hover:bg-slate-800 text-white font-medium py-2 px-4 rounded-lg transition-colors">
+                                        <i class="fas fa-pause mr-2"></i>Pause
+                                    </button>
+                                    <button id="newGameBtn" class="bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 text-white font-medium py-2 px-4 rounded-lg transition-colors">
+                                        <i class="fas fa-refresh mr-2"></i>New Game
+                                    </button>
+                                </div>
+                                
+                                <!-- Instructions -->
+                                <div class="text-sm text-slate-600 dark:text-slate-400 space-y-2">
+                                    <p><strong>Controls:</strong> Use Arrow Keys or WASD to move</p>
+                                    <p><strong>Goal:</strong> Eat the red food to grow and increase your score</p>
+                                    <p><strong>Avoid:</strong> Hitting the walls or your own tail</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-slate-900 dark:bg-dark-300 text-white py-12 transition-colors duration-200">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+                <div class="text-slate-300">
+                    &copy; <span id="copyright-year"></span> Nick Thomas. All rights reserved.
+                </div>
+                <div class="flex space-x-6">
+                    <a href="https://www.linkedin.com/in/nick-thomas-5687b5263" target="_blank" class="text-2xl text-slate-300 hover:text-blue-500 transition-colors">
+                        <i class="fab fa-linkedin"></i>
+                    </a>
+                    <a href="https://github.com/ThomasNikos" target="_blank" class="text-2xl text-slate-300 hover:text-blue-500 transition-colors">
+                        <i class="fab fa-github"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="./js/games.js"></script>
+    <script>
+        // Theme toggle functionality for games page
+        function initTheme() {
+            const themeToggleBtn = document.getElementById('theme-toggle');
+            const html = document.documentElement;
+            
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'light') {
+                html.classList.remove('dark');
+            }
+
+            themeToggleBtn.addEventListener('click', () => {
+                html.classList.toggle('dark');
+                localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+            });
+        }
+
+        // Update copyright year
+        function updateCopyrightYear() {
+            const yearElement = document.getElementById('copyright-year');
+            if (yearElement) {
+                yearElement.textContent = new Date().getFullYear();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initTheme();
+            updateCopyrightYear();
+        });
+    </script>
+</body>
+</html> 

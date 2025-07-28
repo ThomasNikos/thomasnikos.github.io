@@ -56,11 +56,11 @@ function initContactForm() {
             try {
                 await emailjs.sendForm(CONFIG.EMAILJS_SERVICE_ID, CONFIG.EMAILJS_TEMPLATE_ID, form);
                 
-                statusDiv.className = 'rounded-lg p-4 text-center bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300';
+                statusDiv.className = 'p-4 text-center text-green-700 bg-green-100 rounded-lg dark:bg-green-900 dark:text-green-300';
                 statusDiv.textContent = 'Thank you for your message! I will get back to you soon.';
                 form.reset();
             } catch (error) {
-                statusDiv.className = 'rounded-lg p-4 text-center bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300';
+                statusDiv.className = 'p-4 text-center text-red-700 bg-red-100 rounded-lg dark:bg-red-900 dark:text-red-300';
                 statusDiv.textContent = 'Oops! Something went wrong. Please try again later.';
             } finally {
                 submitBtn.disabled = false;
@@ -243,7 +243,7 @@ function getLanguageColor(language) {
 
 async function createRepoCard(repoDetails, index) {
     const li = document.createElement('li');
-    li.className = 'bg-white dark:bg-dark-100 rounded-xl p-6 shadow-md hover:-translate-y-1 transition-all duration-300 repo-card';
+    li.className = 'p-6 bg-white rounded-xl shadow-md transition-all duration-300 dark:bg-dark-100 hover:-translate-y-1 repo-card';
     li.style.setProperty('--animation-order', index);
     
     // Fetch languages for this repository
@@ -251,33 +251,33 @@ async function createRepoCard(repoDetails, index) {
     
     // Create language badges for all languages
     const languageBadges = Object.keys(languages).map(language => 
-        `<span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium mb-2 mr-2" 
+        `<span class="inline-flex items-center px-3 py-1 mr-2 mb-2 text-sm font-medium rounded-full" 
                style="background-color: ${getLanguageColor(language)}20; 
                       color: ${getLanguageColor(language)}">
-            <span class="w-2 h-2 rounded-full mr-2" style="background-color: ${getLanguageColor(language)}"></span>
+            <span class="mr-2 w-2 h-2 rounded-full" style="background-color: ${getLanguageColor(language)}"></span>
             ${language}
         </span>`
     ).join('');
 
     li.innerHTML = `
-        <h2 class="text-xl font-semibold mb-3">
-            <a href="${repoDetails.html_url}" target="_blank" class="text-blue-600 dark:text-blue-500 hover:text-blue-700 dark:hover:text-blue-400 transition-colors">
+        <h2 class="mb-3 text-xl font-semibold">
+            <a href="${repoDetails.html_url}" target="_blank" class="text-blue-600 transition-colors dark:text-blue-500 hover:text-blue-700 dark:hover:text-blue-400">
                 ${repoDetails.name}
             </a>
         </h2>
-        <p class="text-slate-600 dark:text-slate-400 mb-4 h-12 overflow-hidden">
+        <p class="overflow-hidden mb-4 h-12 text-slate-600 dark:text-slate-400">
             ${repoDetails.description || 'No description available'}
         </p>
         <div class="flex flex-wrap gap-2 mb-3">
             ${languageBadges}
         </div>
         <div class="flex flex-wrap gap-2">
-            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-slate-100 dark:bg-dark-200 text-slate-600 dark:text-slate-400">
-                <i class="far fa-star mr-1"></i>
+            <span class="inline-flex items-center px-3 py-1 text-sm font-medium rounded-full bg-slate-100 dark:bg-dark-200 text-slate-600 dark:text-slate-400">
+                <i class="mr-1 far fa-star"></i>
                 ${repoDetails.stargazers_count}
             </span>
-            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-slate-100 dark:bg-dark-200 text-slate-600 dark:text-slate-400">
-                <i class="fas fa-code-branch mr-1"></i>
+            <span class="inline-flex items-center px-3 py-1 text-sm font-medium rounded-full bg-slate-100 dark:bg-dark-200 text-slate-600 dark:text-slate-400">
+                <i class="mr-1 fas fa-code-branch"></i>
                 ${repoDetails.forks_count}
             </span>
         </div>
@@ -291,14 +291,13 @@ async function displayPersonalRepos() {
     reposList.innerHTML = ''; // Clear existing content
 
     if (repos.length > 0) {
-        // Use Promise.all to wait for all cards to be created
         const cards = await Promise.all(
             repos.map((repo, index) => createRepoCard(repo, index))
         );
         cards.forEach(card => reposList.appendChild(card));
     } else {
         reposList.innerHTML = `
-            <div class="col-span-full text-center text-slate-500 dark:text-slate-400 py-8">
+            <div class="col-span-full py-8 text-center text-slate-500 dark:text-slate-400">
                 No personal repositories found.
             </div>
         `;
@@ -311,14 +310,13 @@ async function displayOrgRepos() {
     orgReposList.innerHTML = ''; // Clear existing content
 
     if (repos.length > 0) {
-        // Use Promise.all to wait for all cards to be created
         const cards = await Promise.all(
             repos.map((repo, index) => createRepoCard(repo, index))
         );
         cards.forEach(card => orgReposList.appendChild(card));
     } else {
         orgReposList.innerHTML = `
-            <div class="col-span-full text-center text-slate-500 dark:text-slate-400 py-8">
+            <div class="col-span-full py-8 text-center text-slate-500 dark:text-slate-400">
                 No organization repositories found.
             </div>
         `;
