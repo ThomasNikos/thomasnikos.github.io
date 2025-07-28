@@ -6,6 +6,10 @@ class SnakeGame {
         this.gridSize = 20;
         this.tileCount = this.canvas.width / this.gridSize;
         
+        // Set canvas actual size
+        this.canvas.width = 400;
+        this.canvas.height = 400;
+        
         // Game state
         this.snake = [{ x: 10, y: 10 }];
         this.food = {};
@@ -105,11 +109,55 @@ class SnakeGame {
     }
     
     setupMobileControls() {
-        // Touch button controls
-        document.getElementById('upBtn').addEventListener('click', () => this.handleDirection('up'));
-        document.getElementById('downBtn').addEventListener('click', () => this.handleDirection('down'));
-        document.getElementById('leftBtn').addEventListener('click', () => this.handleDirection('left'));
-        document.getElementById('rightBtn').addEventListener('click', () => this.handleDirection('right'));
+        // Touch button controls with proper event handling
+        const upBtn = document.getElementById('upBtn');
+        const downBtn = document.getElementById('downBtn');
+        const leftBtn = document.getElementById('leftBtn');
+        const rightBtn = document.getElementById('rightBtn');
+        
+        if (upBtn) {
+            upBtn.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                this.handleDirection('up');
+            });
+            upBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.handleDirection('up');
+            });
+        }
+        
+        if (downBtn) {
+            downBtn.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                this.handleDirection('down');
+            });
+            downBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.handleDirection('down');
+            });
+        }
+        
+        if (leftBtn) {
+            leftBtn.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                this.handleDirection('left');
+            });
+            leftBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.handleDirection('left');
+            });
+        }
+        
+        if (rightBtn) {
+            rightBtn.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                this.handleDirection('right');
+            });
+            rightBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.handleDirection('right');
+            });
+        }
         
         // Swipe gestures on canvas
         this.canvas.addEventListener('touchstart', (e) => {
@@ -176,17 +224,9 @@ class SnakeGame {
     }
     
     adjustCanvasForMobile() {
-        const isMobile = window.innerWidth < 768;
-        if (isMobile) {
-            // Make canvas smaller on mobile for better fit
-            const maxSize = Math.min(window.innerWidth - 40, 400);
-            this.canvas.style.width = maxSize + 'px';
-            this.canvas.style.height = maxSize + 'px';
-        } else {
-            // Reset to full size on desktop
-            this.canvas.style.width = '600px';
-            this.canvas.style.height = '600px';
-        }
+        // The canvas size is now handled by CSS classes, so we don't need to manually adjust
+        // Just ensure the canvas maintains its aspect ratio
+        this.canvas.style.imageRendering = 'pixelated';
     }
     
     startGame() {
