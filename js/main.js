@@ -325,6 +325,22 @@ function initSmoothScroll() {
     });
 }
 
+// Phone menu: toggle on button, close after a link is chosen
+function initMobileMenu() {
+    const btn = document.getElementById('mobile-menu-btn');
+    const menu = document.getElementById('mobile-menu');
+    if (!btn || !menu) return;
+
+    const setOpen = (open) => {
+        menu.classList.toggle('hidden', !open);
+        btn.setAttribute('aria-expanded', String(open));
+        btn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+    };
+
+    btn.addEventListener('click', () => setOpen(menu.classList.contains('hidden')));
+    menu.querySelectorAll('a').forEach(link => link.addEventListener('click', () => setOpen(false)));
+}
+
 // Update copyright year
 function updateCopyrightYear() {
     const yearElement = document.getElementById('copyright-year');
@@ -338,6 +354,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initTheme();
     initContactForm();
     initSmoothScroll();
+    initMobileMenu();
     displayPersonalRepos();
     displayOrgRepos();
     updateCopyrightYear();
