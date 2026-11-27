@@ -1,4 +1,4 @@
-# Nick Thomas - Portfolio
+# Nikos Thomas - Portfolio
 
 My personal portfolio website showcasing my projects and skills. Built with modern web technologies and hosted on GitHub Pages.
 

@@ -77,7 +77,6 @@ function initContactForm() {
 
 // Fallback configuration
 const defaultConfig = {
-    GITHUB_TOKEN: '',
     EMAILJS_PUBLIC_KEY: '',
     EMAILJS_SERVICE_ID: '',
     EMAILJS_TEMPLATE_ID: ''
@@ -96,15 +95,11 @@ async function fetchRepoDetails(repoName, owner = 'ThomasNikos') {
         const headers = {
             'Accept': 'application/vnd.github.v3+json'
         };
-        
-        if (CONFIG.GITHUB_TOKEN) {
-            headers['Authorization'] = `Bearer ${CONFIG.GITHUB_TOKEN}`;
-        }
 
         const response = await fetch(`https://api.github.com/repos/${owner}/${repoName}`, { headers });
         if (!response.ok) {
             if (response.status === 403) {
-                console.warn('Rate limit exceeded. Please check the token.');
+                console.warn('GitHub API rate limit exceeded. Try again later.');
             }
             throw new Error(`Failed to fetch repository: ${repoName} (Status: ${response.status})`);
         }
@@ -126,15 +121,11 @@ async function fetchPersonalRepos() {
         const headers = {
             'Accept': 'application/vnd.github.v3+json'
         };
-        
-        if (CONFIG.GITHUB_TOKEN) {
-            headers['Authorization'] = `Bearer ${CONFIG.GITHUB_TOKEN}`;
-        }
 
         const response = await fetch('https://api.github.com/users/ThomasNikos/repos', { headers });
         if (!response.ok) {
             if (response.status === 403) {
-                console.warn('Rate limit exceeded. Please check the token.');
+                console.warn('GitHub API rate limit exceeded. Try again later.');
             }
             throw new Error(`Failed to fetch repositories (Status: ${response.status})`);
         }
@@ -157,15 +148,11 @@ async function fetchOrgRepos() {
         const headers = {
             'Accept': 'application/vnd.github.v3+json'
         };
-        
-        if (CONFIG.GITHUB_TOKEN) {
-            headers['Authorization'] = `Bearer ${CONFIG.GITHUB_TOKEN}`;
-        }
 
         const response = await fetch('https://api.github.com/orgs/uniwa-software/repos', { headers });
         if (!response.ok) {
             if (response.status === 403) {
-                console.warn('Rate limit exceeded. Please check the token.');
+                console.warn('GitHub API rate limit exceeded. Try again later.');
             }
             throw new Error(`Failed to fetch organization repositories (Status: ${response.status})`);
         }
@@ -188,10 +175,6 @@ async function fetchRepoLanguages(repoName, owner = 'ThomasNikos') {
         const headers = {
             'Accept': 'application/vnd.github.v3+json'
         };
-        
-        if (CONFIG.GITHUB_TOKEN) {
-            headers['Authorization'] = `Bearer ${CONFIG.GITHUB_TOKEN}`;
-        }
 
         const response = await fetch(`https://api.github.com/repos/${owner}/${repoName}/languages`, { headers });
         if (!response.ok) {
@@ -260,12 +243,12 @@ async function createRepoCard(repoDetails, index) {
     ).join('');
 
     li.innerHTML = `
-        <h2 class="mb-3 text-xl font-semibold">
+        <h2 class="mb-3 text-xl font-semibold" style="overflow-wrap: anywhere">
             <a href="${repoDetails.html_url}" target="_blank" class="text-blue-600 transition-colors dark:text-blue-500 hover:text-blue-700 dark:hover:text-blue-400">
                 ${repoDetails.name}
             </a>
         </h2>
-        <p class="overflow-hidden mb-4 h-12 text-slate-600 dark:text-slate-400">
+        <p class="overflow-hidden mb-4 h-12 text-slate-600 dark:text-slate-400" style="overflow-wrap: anywhere">
             ${repoDetails.description || 'No description available'}
         </p>
         <div class="flex flex-wrap gap-2 mb-3">
@@ -285,8 +268,11 @@ async function createRepoCard(repoDetails, index) {
     return li;
 }
 
+// Repositories that are not portfolio pieces (profile README, this site, private-purpose tools, old experiments)
+const HIDDEN_REPOS = ['ThomasNikos', 'Barber', 'discord.js', 'thomasnikos.github.io'];
+
 async function displayPersonalRepos() {
-    const repos = await fetchPersonalRepos();
+    const repos = (await fetchPersonalRepos()).filter(repo => !HIDDEN_REPOS.includes(repo.name));
     const reposList = document.getElementById('repos-list');
     reposList.innerHTML = ''; // Clear existing content
 
